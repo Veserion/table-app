@@ -4,6 +4,7 @@ import styled from '@emotion/styled'
 import { DataStore, TData } from '../../stores/DataStore';
 import { inject, observer } from 'mobx-react';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import notificationsService from '../../services/notificationsService';
 const Root = styled.div`
 padding: 20px 0 ;
 display: flex;
@@ -51,11 +52,13 @@ export default class Dashboard extends React.Component<IProps, IState> {
         const id = -(this.props.dataStore!.userData.length + 1)
         this.props.dataStore!.userData.push({ ...values, id })
         this.handleCancel()
+        notificationsService.openNotification('Success', 'User was added succesfully', 'success')
     };
 
     render() {
         const { dataSource } = this.props.dataStore!
         return <Root>
+
             <Button type="primary" size="large" onClick={this.showModal}>New user</Button>
 
             <Radio.Group value={dataSource} onChange={this.handleDataSourceChange}>

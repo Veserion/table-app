@@ -5,6 +5,7 @@ import styled from '@emotion/styled'
 import { DataStore, TData } from '../../stores/DataStore';
 import { inject, observer } from 'mobx-react';
 import Dashboard from '../Dashboard';
+import Search from '../Search';
 
 const Root = styled.div`
 padding: 60px;
@@ -71,9 +72,7 @@ export default class App extends React.Component<IProps, IState> {
     selectedUser: null
   }
 
-  findDataRow = (str: string) => (this.props.dataStore!.data || []).filter(row => Object.values(row).some((val) => String(val).includes(str)))
-
-  handleChangeSearchValue = ({ target: { value: searchingValue } }: React.ChangeEvent<HTMLInputElement>) =>
+  handleChangeSearchValue = (searchingValue: string) =>
     this.setState({ searchingValue })
 
   handleChangeSelectedUser = (selectedRowKeys: (string | number)[], selectedRows: TData[]) =>
@@ -84,16 +83,16 @@ export default class App extends React.Component<IProps, IState> {
     const { searchingValue, selectedUser } = this.state
     const data = this.props.dataStore!.data
       ? this.props.dataStore!.data.map((data: TData, key: number) => ({ ...data, key }))
-      : null;
+      : [];
 
     return <Root>
       <Dashboard />
-      <Input placeholder="The field to filter." value={searchingValue} onChange={this.handleChangeSearchValue} />
+      <Search value={searchingValue} onChange={this.handleChangeSearchValue} />
       <Table
         columns={columns}
-        loading={data === null}
+        loading={this.props.dataStore!.data === null}
         expandable={{ expandedRowRender: (user: TData) => <StyledUser user={user} /> }}
-        dataSource={searchingValue === '' ? data || [] : this.findDataRow(searchingValue)}
+        dataSource={searchingValue === '' ? data : findDataRow(data, searchingValue)}
         rowSelection={{ type: 'radio', onChange: this.handleChangeSelectedUser }}
       />
       <StyledUser user={selectedUser} />
@@ -101,3 +100,6 @@ export default class App extends React.Component<IProps, IState> {
   }
 };
 
+
+const findDataRow = (data: TData[], str: string) =>
+  (data || []).filter(row => Object.values(row).some((val) => String(val).includes(str)))

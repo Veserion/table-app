@@ -1,12 +1,12 @@
-import { notification } from 'antd';
+import { notification } from "antd";
+import { getIconByType } from "../components/Icons";
 
-
-class NotificationsService  {
-    openNotification = (message: string, description: string) => {
-        notification.open({message,description
-          // icon: <SmileOutlined style={{ color: '#108ee9' }} />,
-        });
-      };
+class NotificationsService {
+  openNotification = (
+    message: string,
+    description: string,
+    type?: "error" | "success"
+  ) => notification.open({ message, description, icon: getIconByType(type) });
 }
 
-export default new NotificationsService()
+export default new NotificationsService();

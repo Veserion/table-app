@@ -2,6 +2,8 @@ import { RootStore } from "./index";
 import { SubStore } from "./SubStore";
 import { observable, action, computed } from "mobx";
 import { longDataUrl, shortDataUrl } from "../vars";
+import notificationsService from "../services/notificationsService";
+import axios from "axios";
 
 export type TAddress = {
   streetAddress: string;
@@ -41,9 +43,18 @@ export class DataStore extends SubStore {
   }
 
   @action fetchData = async () => {
-    const url = this.dataSource === "long" ? longDataUrl : shortDataUrl;
-    const data: TData[] = await (await fetch(url)).json();
-    this.serverData = data;
+    try {
+      const currentDataSource = this.dataSource;
+      const url = currentDataSource === "long" ? longDataUrl : shortDataUrl;
+      const data = (await axios.get(url, { timeout: 15 * 1e3 })).data;
+      if (this.dataSource === currentDataSource) this.serverData = data;
+    } catch (e) {
+      notificationsService.openNotification(
+        "Fetch data error",
+        e.toString(),
+        "error"
+      );
+    }
   };
 
   constructor(rootStore: RootStore, initState: any) {
