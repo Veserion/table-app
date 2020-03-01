@@ -1,4 +1,4 @@
-FROM node:10 as builder
+FROM node:13 as builder
 RUN mkdir -p /home/node/app/node_modules && \
          chown -R node:node /home/node/app
 ADD . /home/node/app
