@@ -7,6 +7,7 @@ class NotificationsService {
     description: string,
     type?: "error" | "success"
   ) => notification.open({ message, description, icon: getIconByType(type) });
+  
 }
 
 export default new NotificationsService();
